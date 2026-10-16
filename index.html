@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070d18"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Jarvis">
+<link rel="manifest" href="/manifest.json"><link rel="apple-touch-icon" href="/jarvis-icon.svg">
+<title>JARVIS · Control horario</title>
+<style>
+:root{color-scheme:dark;--bg:#070d18;--panel:#0e192b;--panel2:#14243a;--line:#263d59;--text:#eef6ff;--muted:#9aacc5;--cyan:#70e4ff;--mint:#6af0ca;--blue:#7098ff;--red:#ff9eaa;--gold:#ffd88a}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 50% -20%,#1b3b61 0,transparent 50%),var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:900px;min-height:100dvh;margin:auto;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom);display:flex;flex-direction:column}
+header{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:10px;padding:13px 0;background:#070d18ed;backdrop-filter:blur(12px);border-bottom:1px solid #34516a55}.logo{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,#e9ffff,#70e4ff 30%,#2259a2 75%);color:#061321;font-size:22px;font-weight:900;box-shadow:0 0 20px #70e4ff44}.brand{flex:1}.brand h1{margin:0;letter-spacing:2.5px;font-size:17px}.brand small{font-size:10px;letter-spacing:1px;color:var(--muted)}.status{font-size:10px;color:var(--mint);white-space:nowrap}.led{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:5px}.tabs{display:flex;gap:7px;padding:13px 0;overflow:auto}.tab{white-space:nowrap;border:1px solid var(--line);border-radius:12px;background:#0e1a2b;color:var(--muted);padding:9px 12px;font-size:12px}.tab.active{color:#061523;background:var(--cyan);border-color:var(--cyan);font-weight:700}
+section.panel{display:none}.panel.active{display:block}.intro{padding:20px 4px 12px}.kicker{color:var(--cyan);font-size:10px;letter-spacing:2.5px;font-weight:700}.intro h2{font-size:26px;line-height:1.15;margin:7px 0}.intro p{color:var(--muted);font-size:13px;margin:0}.card{background:linear-gradient(145deg,#101e32,#0b1525);border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0}.card h3{margin:0 0 9px;font-size:15px}.muted{color:var(--muted);font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric{padding:14px;border:1px solid var(--line);border-radius:15px;background:#0d192a}.metric .value{font-size:25px;font-weight:750;letter-spacing:-.6px}.metric .label{font-size:11px;color:var(--muted)}.btn{border:1px solid #34516d;border-radius:12px;padding:11px 13px;background:#14253c;color:var(--text);font-size:13px;cursor:pointer}.btn.primary{background:linear-gradient(120deg,var(--cyan),#7b9aff);border:0;color:#061423;font-weight:750}.btn:disabled{opacity:.45}.actions{display:flex;flex-wrap:wrap;gap:8px}.field{width:100%;background:#0a1423;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:11px;font:inherit}.upload{display:block;border:1px dashed #477091;border-radius:15px;padding:18px;text-align:center;background:#0a1727}.upload input{max-width:100%;font-size:12px;margin-top:10px}.notice{border-left:3px solid var(--gold);padding:9px 11px;background:#2a2417;border-radius:0 10px 10px 0;color:#ffe8b8;font-size:12px}.list{display:flex;flex-direction:column;gap:8px}.event{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);background:#0b1727;border-radius:12px;padding:10px}.eventtime{font-variant-numeric:tabular-nums;color:var(--cyan);font-weight:750;min-width:58px}.eventbody{flex:1;font-size:13px}.eventbody small{display:block;color:var(--muted);font-size:11px}.badge{display:inline-block;font-size:10px;border-radius:7px;padding:3px 6px;background:#173a39;color:var(--mint)}.badge.warn{background:#392c17;color:var(--gold)}.chatlog{display:flex;flex-direction:column;gap:10px;padding:10px 0}.bubble{max-width:90%;border:1px solid var(--line);border-radius:4px 15px 15px 15px;background:#101e31;padding:11px 13px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}.bubble.user{align-self:flex-end;border-radius:15px 4px 15px 15px;background:#173054}.bubble .who{font-size:9px;color:var(--cyan);letter-spacing:1px;font-weight:700;margin-bottom:4px}.bubble p{margin:0}.chatrow{display:flex;gap:7px}.chatrow input{flex:1;min-width:0}.foot{text-align:center;font-size:10px;color:#71839c;padding:15px 0 8px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:500}.empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+@media(min-width:650px){.app{padding-left:24px;padding-right:24px}.intro h2{font-size:32px}.grid{grid-template-columns:repeat(4,1fr)}}
+</style></head>
+<body><div class="app">
+<header><div class="logo">J</div><div class="brand"><h1>J.A.R.V.I.S.</h1><small>ASISTENTE PERSONAL · CONTROL HORARIO</small></div><div class="status" id="status"><span class="led"></span>LOCAL</div></header>
+<nav class="tabs"><button class="tab active" data-tab="inicio">◈ Resumen</button><button class="tab" data-tab="importar">⇧ WhatsApp</button><button class="tab" data-tab="registros">◷ Registros</button><button class="tab" data-tab="chat">✧ Hablar con Jarvis</button></nav>
+
+<section class="panel active" id="inicio">
+<div class="intro"><div class="kicker">SISTEMA PERSONAL</div><h2>Buenas. Tengo tu jornada bajo control.</h2><p>Importa la exportación del grupo de WhatsApp para calcular tus horas con los mensajes de entrada, salida y pausas.</p></div>
+<div class="grid">
+<div class="metric"><div class="value" id="todayHours">0 h 00</div><div class="label">Trabajado hoy</div></div>
+<div class="metric"><div class="value" id="weekHours">0 h 00</div><div class="label">Esta semana</div></div>
+<div class="metric"><div class="value" id="todayBreak">0 min</div><div class="label">Pausas hoy</div></div>
+<div class="metric"><div class="value" id="eventCount">0</div><div class="label">Eventos registrados</div></div>
+</div>
+<div class="card"><h3>Estado de la jornada</h3><div id="workState" class="muted">Aún no hay eventos. Importa el chat de WhatsApp para empezar.</div></div>
+<div class="card"><h3>Inicio rápido</h3><p class="muted">También puedes añadir un evento manual si necesitas corregir o completar un registro.</p><div class="actions"><button class="btn primary" id="quickEnter">＋ He entrado</button><button class="btn" id="quickLunch">☕ Paro a comer</button><button class="btn" id="quickBack">↻ Vuelvo de comer</button><button class="btn" id="quickExit">↗ He salido</button></div></div>
+<div class="notice">Los cálculos dependen de los mensajes que hayas registrado. Si no existe una hora de entrada o salida, Jarvis lo señalará en vez de inventarla.</div>
+</section>
+
+<section class="panel" id="importar">
+<div class="intro"><div class="kicker">FUENTE DE DATOS</div><h2>Conecta tu WhatsApp</h2><p>Importa el archivo de texto exportado por WhatsApp. Jarvis analizará las fechas y horas del mensaje y detectará las frases de tu jornada.</p></div>
+<div class="card"><h3>Cómo exportar el grupo en iPhone</h3><ol class="muted"><li>Abre el grupo de WhatsApp.</li><li>Toca el nombre del grupo arriba.</li><li>Elige <b>Exportar chat</b>.</li><li>Selecciona <b>Sin archivos</b> para exportar solo los mensajes.</li><li>Guarda el archivo .txt en Archivos y selecciónalo abajo.</li></ol></div>
+<div class="card"><h3>Importar archivo de chat (.txt)</h3><label class="upload">Selecciona la exportación de WhatsApp<input id="file" type="file" accept=".txt,text/plain"></label><p class="muted">El análisis del archivo se hace en tu navegador. El texto completo no se envía a la IA automáticamente.</p><div id="importStatus" class="muted"></div><div class="actions" style="margin-top:12px"><button class="btn primary" id="importBtn">Analizar e importar</button><button class="btn" id="clearBtn">Borrar todos los datos</button></div></div>
+<div class="card"><h3>Frases que reconoce</h3><p class="muted">«entro», «he entrado», «empiezo a trabajar», «salgo», «he salido», «termino de trabajar», «paro a comer», «me voy a comer», «vuelvo de comer», «ya he comido», «vuelvo al trabajo» y variantes habituales.</p><p class="muted">Puedes escribir un comentario junto a la frase; Jarvis intenta detectar el evento por palabras clave.</p></div>
+</section>
+
+<section class="panel" id="registros">
+<div class="intro"><div class="kicker">HISTORIAL VERIFICABLE</div><h2>Tus eventos</h2><p>Consulta y revisa cada marca temporal importada o añadida manualmente.</p></div>
+<div class="card"><div class="actions"><input class="field" id="filterDate" type="date" aria-label="Filtrar por fecha" style="max-width:200px"><button class="btn" id="resetFilter">Ver todos</button><button class="btn" id="exportCsv">Exportar CSV</button></div></div>
+<div id="eventList" class="list"></div>
+<div class="card"><h3>Resumen por día</h3><div id="dailySummary" class="muted">Importa mensajes para ver el resumen.</div></div>
+</section>
+
+<section class="panel" id="chat">
+<div class="intro"><div class="kicker">INTERFAZ CONVERSACIONAL</div><h2>¿Qué necesitas saber?</h2><p>Pregunta por tus horas registradas. Los cálculos se generan a partir de los eventos importados.</p></div>
+<div id="chatlog" class="chatlog"><div class="bubble"><div class="who">JARVIS</div><p>Estoy listo. Prueba: «¿Cuántas horas trabajé hoy?» o «Resume mi semana».</p></div></div>
+<div class="card"><div class="chatrow"><input class="field" id="question" placeholder="Pregunta a Jarvis…" autocomplete="off"><button class="btn primary" id="askBtn">Enviar</button></div><p class="muted">Los informes de horas se calculan localmente. La IA opcional sirve para preguntas generales y explicar los resultados.</p></div>
+</section>
+<div class="foot">JARVIS · Tus registros permanecen en este navegador · Revisa siempre los eventos detectados</div>
+</div>
+<script>
+const KEY="jarvis_work_events_v1";
+let events=loadEvents(), importedMessages=0, aiReady=false;
+const $=id=>document.getElementById(id);
+function loadEvents(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return []}}
+function save(){localStorage.setItem(KEY,JSON.stringify(events));renderAll()}
+function pad(n){return String(n).padStart(2,"0")}
+function fmtDate(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function fmtTime(d){return `${pad(d.getHours())}:${pad(d.getMinutes())}`}
+function fmtDuration(min){if(!Number.isFinite(min)||min<0)return "—";return `${Math.floor(min/60)} h ${pad(Math.round(min%60))}`}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function parseDateTime(s){
+ let m;
+ // WhatsApp iOS / Android Spanish exports: [14/10/26, 8:30:00] Name: msg or 14/10/26, 8:30 - Name: msg
+ m=s.match(/^\[?(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4}),?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\]?\s*[-–]?\s*(.*)$/);
+ if(m){let y=+m[3];if(y<100)y+=2000;let d=new Date(y,+m[2]-1,+m[1],+m[4],+m[5],+(m[6]||0));return {date:d,rest:m[7]||""}}
+ // US date format M/D/YY
+ m=s.match(/^\[?(\d{1,2})\/(\d{1,2})\/(\d{2,4}),?\s+(\d{1,2}):(\d{2})(?:\s?(AM|PM))?\]?\s*[-–]?\s*(.*)$/i);
+ if(m){let y=+m[3];if(y<100)y+=2000;let h=+m[4];if(m[6]){if(m[6].toUpperCase()==="PM"&&h<12)h+=12;if(m[6].toUpperCase()==="AM"&&h===12)h=0}let d=new Date(y,+m[1]-1,+m[2],h,+m[5]);return {date:d,rest:m[7]||""}}
+ return null;
+}
+function classify(text){
+ const t=text.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ if(/\b(vuelvo de comer|vuelvo a trabajar|vuelvo al trabajo|ya he comido|ya comi|termino de comer|fin de comida|fin pausa|reanudo|reincorporo|estoy de vuelta)\b/.test(t))return "resume";
+ if(/\b(paro a comer|paro para comer|me voy a comer|voy a comer|pausa para comer|empiezo a comer|salgo a comer|hora de comer|pausa comida)\b/.test(t))return "lunch";
+ if(/\b(entra|entro|he entrado|acabo de entrar|empiezo a trabajar|inicio jornada|comienzo a trabajar|ficho entrada|entrada al trabajo|llego al trabajo)\b/.test(t))return "in";
+ if(/\b(salgo|he salido|acabo de salir|termino de trabajar|fin de jornada|me voy del trabajo|ficho salida|salida del trabajo|termino jornada)\b/.test(t))return "out";
+ return null;
+}
+const labels={in:"Entrada al trabajo",lunch:"Inicio de pausa para comer",resume:"Fin de pausa / vuelta al trabajo",out:"Salida del trabajo"};
+function addEvent(date,type,source="manual",raw=""){if(!date||isNaN(date.getTime()))return;const key=`${date.getTime()}-${type}`;if(events.some(e=>e.key===key))return;events.push({key,ts:date.getTime(),type,source,raw:raw.slice(0,300)});}
+function parseExport(text){
+ const lines=text.replace(/^\uFEFF/,"").split(/\r?\n/);let parsed=[],current=null;
+ for(const line of lines){const p=parseDateTime(line);if(p){if(current)parsed.push(current);current={date:p.date,body:p.rest};}else if(current)current.body+="\n"+line;}
+ if(current)parsed.push(current);
+ let found=0;
+ for(const m of parsed){const type=classify(m.body);if(type){const before=events.length;addEvent(m.date,type,"WhatsApp",m.body);if(events.length>before)found++;}}
+ events.sort((a,b)=>a.ts-b.ts);return {messages:parsed.length,found};
+}
+function eventDate(e){return new Date(e.ts)}
+function dayEvents(date){return events.filter(e=>fmtDate(eventDate(e))===date).sort((a,b)=>a.ts-b.ts)}
+function calculateDay(date){
+ const es=dayEvents(date);let activeStart=null,lunchStart=null,work=0,breaks=0,issues=[],segments=[];
+ for(const e of es){
+  const d=eventDate(e);
+  if(e.type==="in"){if(activeStart!==null){issues.push("Entrada duplicada sin salida previa");}else activeStart=d.getTime();}
+  if(e.type==="lunch"){if(activeStart===null)issues.push("Pausa sin una entrada de trabajo previa");else if(lunchStart!==null)issues.push("Pausa para comer duplicada");else{work+=Math.max(0,(d.getTime()-activeStart)/60000);activeStart=null;lunchStart=d.getTime();}}
+  if(e.type==="resume"){if(lunchStart===null)issues.push("Vuelta de comida sin pausa previa");else{breaks+=Math.max(0,(d.getTime()-lunchStart)/60000);lunchStart=null;activeStart=d.getTime();}}
+  if(e.type==="out"){if(lunchStart!==null){breaks+=Math.max(0,(d.getTime()-lunchStart)/60000);lunchStart=null;issues.push("Salida durante una pausa: revisa el registro");}else if(activeStart!==null){work+=Math.max(0,(d.getTime()-activeStart)/60000);activeStart=null;}else{issues.push("Salida sin entrada activa");}}
+ }
+ let state=activeStart!==null?"Jornada abierta":lunchStart!==null?"Pausa abierta":"Jornada cerrada";
+ if(activeStart!==null)work+=Math.max(0,(Date.now()-activeStart)/60000);
+ if(lunchStart!==null)breaks+=Math.max(0,(Date.now()-lunchStart)/60000);
+ return {work:Math.round(work),breaks:Math.round(breaks),issues,state,events:es,open:activeStart!==null||lunchStart!==null};
+}
+function weekDates(){const now=new Date(),day=(now.getDay()+6)%7;const mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-day);return Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return fmtDate(d)})}
+function renderAll(){
+ const today=fmtDate(new Date()),d=calculateDay(today),week=weekDates().reduce((n,day)=>n+calculateDay(day).work,0);
+ $("todayHours").textContent=fmtDuration(d.work);$("weekHours").textContent=fmtDuration(week);$("todayBreak").textContent=d.breaks+" min";$("eventCount").textContent=events.length;
+ $("workState").innerHTML=events.length?`<span class="badge">${esc(d.state)}</span><p class="muted">${d.events.length} eventos hoy · ${d.issues.length?'<span style="color:var(--gold)">Revisa incidencias</span>':'Sin incidencias detectadas'}${d.issues.length?'<br>'+d.issues.map(esc).join('<br>'):""}</p>`:"Aún no hay eventos. Importa el chat de WhatsApp para empezar.";
+ renderEvents();renderDaily();
+}
+function renderEvents(){
+ const filter=$("filterDate").value;const list=events.filter(e=>!filter||fmtDate(eventDate(e))===filter).slice().sort((a,b)=>b.ts-a.ts);
+ $("eventList").innerHTML=list.length?list.map(e=>`<div class="event"><div class="eventtime">${fmtTime(eventDate(e))}</div><div class="eventbody">${esc(labels[e.type]||e.type)}<small>${fmtDate(eventDate(e))} · ${esc(e.source)}${e.raw?" · "+esc(e.raw):""}</small></div><button class="btn" data-delete="${esc(e.key)}" aria-label="Borrar evento">×</button></div>`).join(""):'<div class="empty">No hay eventos para mostrar.</div>';
+ $("eventList").querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>{events=events.filter(e=>e.key!==b.dataset.delete);save()});
+}
+function renderDaily(){
+ const days=[...new Set(events.map(e=>fmtDate(eventDate(e))))].sort().reverse().slice(0,14);
+ $("dailySummary").innerHTML=days.length?`<table><thead><tr><th>Fecha</th><th>Trabajado</th><th>Pausa</th><th>Estado</th></tr></thead><tbody>${days.map(day=>{const d=calculateDay(day);return `<tr><td>${day}</td><td>${fmtDuration(d.work)}</td><td>${d.breaks} min</td><td>${d.issues.length?"Revisar":d.state}</td></tr>`}).join("")}</tbody></table>`:"Importa mensajes para ver el resumen.";
+}
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));});
+$("importBtn").onclick=async()=>{
+ const f=$("file").files[0];if(!f){$("importStatus").textContent="Primero selecciona el archivo .txt exportado.";return}
+ try{const text=await f.text();const r=parseExport(text);importedMessages=r.messages;save();$("importStatus").textContent=`Analizados ${r.messages} mensajes; añadidos ${r.found} eventos reconocidos. Revisa los resultados en Registros.`;}
+ catch(e){$("importStatus").textContent="No se pudo leer el archivo: "+e.message}
+};
+$("clearBtn").onclick=()=>{if(confirm("¿Borrar todos los eventos guardados en este navegador? Esta acción no se puede deshacer.")){events=[];save();$("importStatus").textContent="Registro borrado."}};
+$("resetFilter").onclick=()=>{$("filterDate").value="";renderEvents()};$("filterDate").onchange=renderEvents;
+$("exportCsv").onclick=()=>{const rows=[["fecha","hora","evento","origen","mensaje"],...events.slice().sort((a,b)=>a.ts-b.ts).map(e=>[fmtDate(eventDate(e)),fmtTime(eventDate(e)),labels[e.type],e.source,e.raw])];const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="jarvis-registro-horario.csv";a.click();URL.revokeObjectURL(a.href)};
+function quick(type){addEvent(new Date(),type);save();document.querySelector('[data-tab="registros"]').click()}
+$("quickEnter").onclick=()=>quick("in");$("quickLunch").onclick=()=>quick("lunch");$("quickBack").onclick=()=>quick("resume");$("quickExit").onclick=()=>quick("out");
+function report(){
+ const today=fmtDate(new Date()),t=calculateDay(today),days=weekDates(),week=days.map(day=>({day,...calculateDay(day)}));
+ return `Datos del registro laboral (zona horaria del dispositivo: ${Intl.DateTimeFormat().resolvedOptions().timeZone}). Hoy ${today}: trabajado ${fmtDuration(t.work)}, pausas ${t.breaks} minutos, estado ${t.state}. Incidencias: ${t.issues.join("; ")||"ninguna"}. Esta semana: ${fmtDuration(week.reduce((n,d)=>n+d.work,0))}. Eventos guardados: ${events.length}. Últimos eventos: ${events.slice().sort((a,b)=>b.ts-a.ts).slice(0,30).map(e=>`${fmtDate(eventDate(e))} ${fmtTime(eventDate(e))} ${labels[e.type]}`).join(" | ")||"ninguno"}.`;
+}
+function chatBubble(role,text){const div=document.createElement("div");div.className="bubble "+(role==="user"?"user":"");const who=document.createElement("div");who.className="who";who.textContent=role==="user"?"TÚ":"JARVIS";const p=document.createElement("p");p.textContent=text;div.append(who,p);$("chatlog").append(div);div.scrollIntoView({behavior:"smooth",block:"nearest"})}
+async function ask(){
+ const q=$("question").value.trim();if(!q)return;$("question").value="";chatBubble("user",q);
+ const n=q.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ const workQuery=/(hora|horas|trabaj|jornada|turno|sal[ií]|entr[eé]|com[ií]|pausa|semana|ayer|hoy|mes)/.test(n);
+ if(workQuery){
+  const today=fmtDate(new Date()),d=calculateDay(today),days=weekDates(),weekly=days.reduce((sum,day)=>sum+calculateDay(day).work,0);
+  let answer=`Resumen de tu registro:\n• Hoy (${today}): ${fmtDuration(d.work)} trabajados.\n• Pausas registradas hoy: ${d.breaks} minutos.\n• Esta semana natural: ${fmtDuration(weekly)}.\n• Estado de hoy: ${d.state}.\n• Eventos guardados: ${events.length}.`;
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);const yd=calculateDay(fmtDate(yesterday));
+  if(n.includes("ayer"))answer+=`\n• Ayer (${fmtDate(yesterday)}): ${fmtDuration(yd.work)} trabajados y ${yd.breaks} minutos de pausa.`;
+  if(n.includes("incidencia")||n.includes("error"))answer+=`\n• Incidencias de hoy: ${d.issues.join("; ")||"ninguna detectada"}.`;
+  answer+="\n\nNota: el cálculo es tan completo como los eventos importados. Comprueba el historial si falta alguna marca.";
+  chatBubble("assistant",answer);
+  if(aiReady&&/(explica|analiza|por que|por qué|consejo|ayuda|resume|resumen)/.test(n)){
+    try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:q+"\n\n"+report()}]})});const data=await r.json();if(r.ok&&data.reply)chatBubble("assistant",data.reply)}catch{}
+  }
+ }else if(aiReady){
+  chatBubble("assistant","Consultando…");
+  const placeholder=$("chatlog").lastElementChild;
+  try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:[{role:"user",content:q+"\n\nContexto del registro laboral:\n"+report()}]})});const data=await r.json();placeholder.remove();chatBubble("assistant",r.ok?data.reply:"No he podido responder: "+(data.error||"error de conexión"))}catch{placeholder.remove();chatBubble("assistant","No he podido conectar con la IA. Los registros y cálculos locales siguen funcionando.")}
+ }else{
+  chatBubble("assistant","Puedo calcular horas a partir de los eventos importados, pero la conversación de IA aún no está configurada. Para preguntas de jornada, prueba «¿Cuántas horas trabajé hoy?» o configura OPENAI_API_KEY en el servidor para activar la IA general.");
+ }
+}
+$("askBtn").onclick=ask;$("question").addEventListener("keydown",e=>{if(e.key==="Enter")ask()});
+fetch("/api/status").then(r=>r.json()).then(d=>{aiReady=d.ready;$("status").innerHTML=`<span class="led"></span>${d.ready?"IA CONECTADA":"MODO LOCAL"}`}).catch(()=>{$("status").innerHTML='<span class="led"></span>MODO LOCAL'});
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
+renderAll();
+</script></body></html>
